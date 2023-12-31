@@ -28,8 +28,25 @@ Peak-gene assignments enable insights beyond RNA-seq or ATAC-seq alone:
 XChrom is a highly interactive tool that enables characterization of gene/pathway expression and associated chromatin changes.
 
 picture slide 7
-  
 
 
+The left panel dislays the options and information of the selected experiment and gene set. The main panels is divided into two tabs: one for the gene level and one for the pathway level. <br/>
+In this example, the page is selected to be for the gene level tab showing the list of all the genes in this experiment. The interactive table is ordered by the number of significant ATAC peaks. MYC has the highest number with 44 peaks.
+
+
+  PICTURE
+
+If you click over the name of a gene, for example HS3ST1, it is linked to the scatter plot below and highlight the selected gene in orange. When hovering over it, it displays extra information like the the RNA logFC and the average ATAC logFC, the number of significant peaks associated to that gene.
+
+ADD ABOUT HOW TO COMPUTE X AXIS!!!!!!!!!!
+
+PICTURE
+
+It then populates another interactive table with the list of the peaks associated to that gene. Once you click on the pick id, it generates a link to the UCSC Genome Browser in that exact genomic location showed below.
+
+PICTURE
+
+It also populated a third table with the list of all the geneset that include that selected genes. <br/>
+The second tab level, 
 
 
