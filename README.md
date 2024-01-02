@@ -14,7 +14,7 @@ The goal is to systematically correlate treatment-induced chromatin changes (mea
 <img src="/readme_figures/NNA_1.JPG" alt="image" style="width:550px;height:auto;">
 
 
-As a solution, we assign each ATAC-seq peak to nearest gene transcription start site wihtin 1 million base pair, excluding genes not expressed by RNA-seq.
+As a solution, we assign each ATAC-seq peak to the nearest gene transcription start site within 1 million base pair, excluding genes not expressed by RNA-seq.
 
 <img src="/readme_figures/NNA_2.JPG" alt="image" style="width:550px;height:auto;">
 
@@ -26,21 +26,42 @@ Peak-gene assignments enable insights beyond RNA-seq or ATAC-seq alone:
 
 # Data
 
+The standard pipeline is ran on publicly available data from paper "[Chromatin accessibility underlies synthetic lethality of SWI/SNF subunits in ARID1A-mutant cancers](https://elifesciences.org/articles/30506#content)" looking for potential PD markers as well as what an ATAC-seq profile looks like. This paper has ATACseq results of ARID1A-/- cancers with ARID1B KD. 
+
+**Data from GEO series**:  [link](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE101975) <br/>
+Biological context (N=2):  TOV21G, HCT116 <br/>
+wild type and modified with stable ARID1A KO <br/>
+Perturbagens (N=1):  shRNA KD of ARID1B <br/>
+Doses (N/A):  just the shRNA no relevant dose <br/>
+Negative control (N=1):  wild type / untreated <br/>
+Replicates:  N=2
+
+### HCT116 (ACH-000971)
+* WT: SRR5876158 & SRR5876159
+* ARID1B knockdown: SRR5876160 & SRR5876161
+* ARID1A knockout: SRR5876162 & SRR5876163
+* ARID1A knockout ARID1B knockdown:SRR5876164 & SRR5876165
+
+### TOV21G (ACH-000885)
+* WT: SRR5876661 & SRR5876662
+* ARID1B knockdown: SRR5876663 & SRR5876664
+
+
 
 # Data Flow
 
 
-The pipeline is split into three parts. The first one (01-Assign_peak2gene.Rmd) is assignining peaks to genes that are also expressed in the RNA experiment and peaks within 1 million base pair of the Nearest TSS . The second part (02-Compute_logFC_by_gene.Rmd) computes the average logFC from the ATACseq experiment. It filters for peaks that are significant and then take the average of the peaks that are asscoiated to the same gene. It corresponds to the first tab of the app: the gene level. The last part (03-Compute_logFC_by_GS.Rmd) computes the weighted average logFC by geneset and compute the RNA NES score. It corresponds to the second tab: the pathway level.
+The pipeline is split into three parts. The first one (01-Assign_peak2gene.Rmd) is assignining peaks to genes that are also expressed in the RNA experiment and peaks within 1 million base pair of the Nearest TSS . The second part (02-Compute_logFC_by_gene.Rmd) computes the average logFC from the ATACseq experiment. It filters for peaks that are significant and then takes the average of the peaks that are asscoiated to the same gene. It corresponds to the first tab of the app: the gene level. The last part (03-Compute_logFC_by_GS.Rmd) computes the weighted average ATAC logFC and compute the RNA NES score by geneset. It corresponds to the second tab: the pathway level.
 
-<img src="/diagrams/XChrom_diagram.jpg" alt="image" style="width:760px;height:auto;">
+<img src="/diagrams/XChrom_diagram.jpg" alt="image" style="width:600px;height:auto;">
 
 # XChrom app snapshot
 
 
-The app is organized with a let panel that dislays several dropdown menus. It is possible to select the experiment on the first one, which will be descripted right below it. The next two dropdown menus are for the the gene set collection. <br/>
+The app is organized with a left panel that dislays several dropdown menus. It is possible to select the experiment on the first one, which is described right below it. The next two dropdown menus are for the gene set collection. <br/>
 The main panels is divided into two tabs: one for the gene level and one for the pathway level. They will be both described in the example below. <br/>
 
-On this screenshot, the page is selected to be for the gene level tab showing the list of all the genes in this experiment. The interactive table is ordered by the number of significant ATAC peaks. MYC has the highest number with 44 peaks.
+On this screenshot, the page is selected to be for the gene level tab showing the list of all the expressed genes in this experiment. The interactive table is ordered by the number of significant ATAC peaks. MYC has the highest number with 44 peaks.
 
 <img src="/readme_figures/overall_view.JPG" alt="image" style="width:760px;height:auto;">
 
@@ -48,16 +69,14 @@ Once you click on the name of a gene, for example HS3ST1, it is linked to the sc
 
 <img src="/readme_figures/First_tab1.JPG" alt="image" style="width:760px;height:auto;">
 
-This plot is a visual repesentation of the table right above where each point is a gene.
-The y-axis corresponds to the change in gene expression with a unique logFC from the RNA experiment results. The x-axis represents the change in chromatin. Since several peaks can be associated to the same gene, we compute the average logFC of the peaks that are significant (p-value < 0.05) for each gene. The color is the log10 of the total number of siginificant peaks that are associated to that gene. In consequence, we can establish a relationship between the change in chromatin and quantify the activity around it.
+This plot is a visual repesentation of the gene summary table where each point is a gene.
+The y-axis corresponds to the change in gene expression with a unique logFC from the RNA experiment results. The x-axis represents the change in chromatin. Since several peaks can be associated to the same gene, we compute the average logFC of the peaks that are significant (p-value < 0.05) for each gene. The color is the log10 of the total number of siginificant peaks that are associated to that gene. In consequence, we can quantify the chromatin remodeling activity around a gene and establish a relationship with the gene expression.
 
 <img src="/readme_figures/chromatin_vs_expression_relationship.JPG" alt="image" style="width:760px;height:auto;">
 
-Selecting a gene in the first interactive table or in the scatter plot also populates another summary of all the peaks that are associated with that gene. It is pre-selected to display only siginificant peaks but it is possible to add any other other peaks with the radio button. It gives crucial information about every peak logFC. Once you click on the peak id, it generates a link to the UCSC Genome Browser in that exact genomic location showed below.
+Selecting a gene in the first interactive table or in the scatter plot also populates another summary of all the peaks that are associated with that gene. It is pre-selected to display only siginificant peaks but it is possible to add any other other peaks with the radio button. It gives crucial information about every peak logFC like the significance, the distance to TSS and some annotations. Once you click on the peak id, it generates a link to the UCSC Genome Browser in that exact genomic location showed below.
 
-<img src="/readme_figures/First_tab2.JPG" alt="image" style="width:760px;height:auto;">
-
-<img src="/readme_figures/IGV.JPG" alt="image" style="width:760px;height:auto;">
+<img src="/readme_figures/First_tab2.JPG" alt="image" style="width:760px;height:auto;"> <img src="/readme_figures/IGV.JPG" alt="image" style="width:760px;height:auto;">
 
 It also populated a third table with the list of all the geneset that include that selected genes. This table could be used for the the second tab, the pathway level. 
 
