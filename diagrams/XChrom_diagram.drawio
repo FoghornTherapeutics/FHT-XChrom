@@ -1,0 +1,159 @@
+<mxfile host="app.diagrams.net" modified="2024-01-02T18:09:04.235Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" etag="_rYAjTuIchJB60VZeP-t" version="22.1.15" type="device">
+  <diagram id="_CetI8lFHk_NutWIORIe" name="Page-1">
+    <mxGraphModel dx="1914" dy="1126" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="HoxelTWlptAsy40KoQ3K-70" value="" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillStyle=solid;fillColor=none;strokeColor=#FF9933;strokeWidth=5;" parent="1" vertex="1">
+          <mxGeometry x="10" y="50" width="830" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-69" value="" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillStyle=solid;fillColor=none;strokeColor=#00CC00;strokeWidth=5;" parent="1" vertex="1">
+          <mxGeometry x="10" y="360" width="820" height="207.5" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-115" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="HoxelTWlptAsy40KoQ3K-117" target="HoxelTWlptAsy40KoQ3K-121" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-116" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="HoxelTWlptAsy40KoQ3K-117" target="HoxelTWlptAsy40KoQ3K-137" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-117" value="RNAseq&lt;br&gt;(DGE logFC)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="30" y="90" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-118" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="HoxelTWlptAsy40KoQ3K-119" target="HoxelTWlptAsy40KoQ3K-125" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-119" value="ATACseq&lt;br&gt;(DPA logFC)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="490" y="90" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-120" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="HoxelTWlptAsy40KoQ3K-121" target="HoxelTWlptAsy40KoQ3K-123" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-121" value="subset expressed genes from TxDb object (trasncripts from GenCode) &amp;amp;&amp;nbsp;filter to protein_coding genes" style="ellipse;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="200" y="70" width="190" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-122" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="HoxelTWlptAsy40KoQ3K-123" target="HoxelTWlptAsy40KoQ3K-125" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-123" value="myTxDb" style="whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="235" y="195" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-124" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="HoxelTWlptAsy40KoQ3K-125" target="HoxelTWlptAsy40KoQ3K-127" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-125" value="Assign Peak to Genes (ChipSeeker)&lt;br&gt;within 1e6 bp" style="ellipse;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="490" y="195" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-126" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="HoxelTWlptAsy40KoQ3K-127" target="HoxelTWlptAsy40KoQ3K-129" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-127" value="peakAnno_df table&lt;br&gt;ATAC logFC assigned to genes" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
+          <mxGeometry x="670" y="190" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-128" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="HoxelTWlptAsy40KoQ3K-129" target="HoxelTWlptAsy40KoQ3K-131" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-129" value="subset ATAC p value &amp;lt;= 0.05" style="ellipse;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="680" y="397.5" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-130" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="HoxelTWlptAsy40KoQ3K-131" target="HoxelTWlptAsy40KoQ3K-133" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-131" value="sig_peakAnno_df" style="whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="510" y="482.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-132" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="HoxelTWlptAsy40KoQ3K-133" target="HoxelTWlptAsy40KoQ3K-135" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-133" value="compute per sig genes:&lt;br&gt;- Avg ATAC logFC&lt;br&gt;- # sig peaks" style="ellipse;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="260" y="477.5" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-134" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="HoxelTWlptAsy40KoQ3K-135" target="HoxelTWlptAsy40KoQ3K-137" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-135" value="ATAC_by_gene_df" style="whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="275" y="385" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-136" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="HoxelTWlptAsy40KoQ3K-137" target="HoxelTWlptAsy40KoQ3K-138" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-137" value="merge by gene on RNAseq" style="ellipse;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="30" y="387.5" width="120" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-21" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="HoxelTWlptAsy40KoQ3K-138" target="vPpgw-Zwa4d0IB2bJW79-7" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="90" y="617.5" />
+              <mxPoint x="275" y="617.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HoxelTWlptAsy40KoQ3K-138" value="logFC_by_gene_df&lt;br&gt;table" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
+          <mxGeometry x="30" y="477.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-3" value="" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;fillStyle=solid;fillColor=none;strokeColor=#CC00CC;strokeWidth=5;" parent="1" vertex="1">
+          <mxGeometry x="10" y="630" width="820" height="370" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="vPpgw-Zwa4d0IB2bJW79-5" target="vPpgw-Zwa4d0IB2bJW79-7" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-5" value="geneset collection boolean matrix" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="40" y="700" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="vPpgw-Zwa4d0IB2bJW79-7" target="vPpgw-Zwa4d0IB2bJW79-9" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-7" value="compute per geneset:&lt;br&gt;- Avg ATAC logFC&lt;br&gt;- # sig peaks&lt;br&gt;- # sig genes" style="ellipse;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="200" y="685" width="190" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="vPpgw-Zwa4d0IB2bJW79-9" target="vPpgw-Zwa4d0IB2bJW79-19" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-9" value="ATAC_log_by_GS_df" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="510" y="700" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="vPpgw-Zwa4d0IB2bJW79-11" target="vPpgw-Zwa4d0IB2bJW79-15" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-11" value="geneset collection mapping metadata" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="40" y="810" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="vPpgw-Zwa4d0IB2bJW79-13" target="vPpgw-Zwa4d0IB2bJW79-15" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-13" value="GSEA report from experiment" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="40" y="910" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-14" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="vPpgw-Zwa4d0IB2bJW79-15" target="vPpgw-Zwa4d0IB2bJW79-17" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-15" value="Add geneset metadata to GSEA report + compute RNA NES" style="ellipse;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="260" y="835" width="150" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="vPpgw-Zwa4d0IB2bJW79-17" target="vPpgw-Zwa4d0IB2bJW79-19" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-17" value="RNA_GSEA_df" style="whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="510" y="860" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-18" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="vPpgw-Zwa4d0IB2bJW79-19" target="vPpgw-Zwa4d0IB2bJW79-20" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-19" value="merge on GS" style="ellipse;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="510" y="780" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vPpgw-Zwa4d0IB2bJW79-20" value="logFC_by_GS_df&lt;br&gt;scatter plot" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
+          <mxGeometry x="680" y="780" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="tiibDQ-3SaRuMISHzLgr-1" value="01-Assign_peak2gene.Rmd" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=#d6b656;fillColor=#fff2cc;gradientColor=#ffd966;" vertex="1" parent="1">
+          <mxGeometry x="310" y="10" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tiibDQ-3SaRuMISHzLgr-2" value="02-Compute_logFC_by_gene.Rmd" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=#82b366;fillColor=#d5e8d4;gradientColor=#97d077;" vertex="1" parent="1">
+          <mxGeometry x="300" y="310" width="210" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tiibDQ-3SaRuMISHzLgr-3" value="03-Compute_logFC_by_GS.Rmd" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=#996185;fillColor=#e6d0de;gradientColor=#d5739d;" vertex="1" parent="1">
+          <mxGeometry x="310" y="590" width="200" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,267 @@
+---
+title: "06-meanATAC_logFC_vs_GSEA"
+output: html_document
+---
+
+
+
+ PROBLEM2: GSEA done on repeated genes  SOLUTION: remove duplicates
+for every symbol + logFC paired that are uniqe
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message=FALSE)
+```
+
+
+```{r}
+library(assertthat)
+library(glue)
+library(dplyr)
+library(tidyverse)
+library(filesstrings)
+library(GSA)
+```
+
+
+#### Setup directories ####
+```{r}
+
+# Setup directory
+print(paste('getwd():', getwd()))
+getwd()
+
+# Read directory of RNAseq and ATACseq logFC datasets
+DGE_DPA_raw_data_dir <- "../data/DGE_DPA_raw_data"
+
+# Read directory for ATAC peak assigned to gene datasets (Table2)
+peakAnno_df_dir <- "../results/peakAnno_df"
+
+# Read directory of GSEA reports from RNAseq pipeline
+GSEA_reports_dir <- "../data/GSEA_reports/"
+# 
+# Read geneset collection metadata directory
+geneset_collection_metadata_dir <- "../data/geneset_collection_metadata/"
+
+# Datasets with logFC by gene (Table 1)
+logFC_by_gene_df_dir <- "../results/logFC_by_gene_df"
+create_dir(logFC_by_gene_df_dir)
+
+
+# Experiment metadata
+metadata_df_path <-  '../data/experiment_metadata_df.csv'
+metadata_df <- read.table(metadata_df_path, header=TRUE, sep =',', check.names = F)
+metadata_df <-metadata_df[!is.na(metadata_df$Contrast),]
+```
+
+
+
+
+#### Read peakAnno_df: dataframe with ATAC logFC for assigned to genes (each row is a peak) and subset significant ATAC peaks ####
+```{r}
+subset_sig_peakAnno_df <- function(experiment_id){
+  
+  # Read peakAnno_df ATAC logFC assigned to genes 
+  peakAnno_df_name <- metadata_df[metadata_df$Id == experiment_id, ]$peakAnno_df
+  peakAnno_df_path <- paste0(glue("{peakAnno_df_dir}/{peakAnno_df_name}"))
+  print(paste("Assert that", peakAnno_df_path,  "exists:", assert_that(file.exists(peakAnno_df_path))))
+  peakAnno_df <- read.table(peakAnno_df_path, header=TRUE, sep =',')
+  
+  
+  # Subset significant ATAC peaks
+  sig_peakAnno_df <- peakAnno_df[peakAnno_df$P_Value <= 0.05, ]
+  
+  return(sig_peakAnno_df)
+}
+```
+
+
+
+
+
+#### Compute ATAC_logFC_by_gene on significant changes in ATAC peaks: dataframe with Avg ATAC logFC for each genes and RNA logFC merged on genes (each row is a peak) ####
+```{r}
+compute_ATAC_by_gene_df <- function(sig_peakAnno_df){
+  
+  print('Compute ATAC_logFC_by_gene on significant changes in ATAC peaks')
+
+  ATAC_by_gene_df <- sig_peakAnno_df %>%
+    group_by(SYMBOL) %>% 
+    drop_na()%>%
+    mutate(Avg_ATAC_logFC = mean(logFC, na.rm=TRUE))%>%
+    mutate(nb_sig_peak = n())
+    
+    return(ATAC_by_gene_df)
+}
+```
+
+
+#### Read RNA DGE logFC ####
+```{r}
+read_RNA_DGE_logFC <- function(experiment_id){
+  
+  RNAseq_file <- metadata_df[metadata_df$Id == experiment_id,]$RNAseq_DGE
+  RNAseq_path <- glue('./{DGE_DPA_raw_data_dir}/{RNAseq_file}')
+  print(paste("Assert that", RNAseq_path,  "exists:",  assert_that(file.exists(RNAseq_path))))
+  RNAseq <- read.table(RNAseq_path, header=TRUE, fill = TRUE)
+  RNAseq <- RNAseq[, c('ens_id', 
+                       'gene_symbol',
+                       'logFC',
+                       't',
+                       'P_Value')] 
+  
+  names(RNAseq)[names(RNAseq) == "ens_id"] <- "ENSEMBL"
+  names(RNAseq)[names(RNAseq) == "gene_symbol"] <- "RNA_SYMBOL"
+  names(RNAseq)[names(RNAseq) == "logFC"] <- "RNA_logFC"
+  names(RNAseq)[names(RNAseq) == "t"] <- "RNA_t"
+  names(RNAseq)[names(RNAseq) == "P_Value"] <- "RNA_P_Value"
+  # RNAseq <- RNAseq[!duplicated(RNAseq), ]
+  return (RNAseq)
+}
+```
+
+
+
+
+#### Merge ATAC-seq avgerage logFC on genes on RNA-seq data on Nearest TSS (right merged) ####
+```{r}
+merge_logFC_by_gene_df <-function(ATAC_by_gene_df, RNAseq){
+    
+  print('Merge ATAC-seq avgerage logFC on genes on RNA-seq data on Nearest TSS (right merged)')
+
+  names(ATAC_by_gene_df)[names(ATAC_by_gene_df) == "SYMBOL"] <- "ATAC_SYMBOL"
+  names(ATAC_by_gene_df)[names(ATAC_by_gene_df) == "logFC"] <- "ATAC_logFC"
+  names(ATAC_by_gene_df)[names(ATAC_by_gene_df) == "t"] <- "ATAC_t"
+  names(ATAC_by_gene_df)[names(ATAC_by_gene_df) == "P_Value"] <- "ATAC_P_Value"
+  
+  # Merge dataframes
+  logFC_by_gene_df <- merge(x = ATAC_by_gene_df, y = RNAseq, by.x = "ENSEMBL", by.y="ENSEMBL", all.y= T)
+  
+  return(logFC_by_gene_df)
+}
+```
+
+
+
+#### Add information about gene ####
+```{r}
+gene_info <- function(){
+  BAF_gene_gmt <- GSA.read.gmt('../data/custom_BAF_collection.gmt')$genesets
+  BAF_gene_list <- unlist(BAF_gene_gmt)
+  BAF_gene_set <- unique(BAF_gene_list)
+  BAF_gene <- BAF_gene_set[BAF_gene_set != ""]
+  BAF_gene_df <- data.frame(BAF_gene)
+  BAF_gene_df['BAF.gene'] <- 'YES'
+  
+  TF_gene_gmt <- GSA.read.gmt('../data/human_tfs.gmt')$genesets
+  TF_gene_list <- unlist(TF_gene_gmt)
+  TF_gene_set <- unique(TF_gene_list)
+  TF_gene <- TF_gene_set[TF_gene_set != ""]
+  TF_gene_df <- data.frame(TF_gene)
+  TF_gene_df['TF.gene'] <- 'YES'
+
+  gene_df <- merge(BAF_gene_df, TF_gene_df, by.x = "BAF_gene", by.y = "TF_gene", all = T)
+  return(gene_df)
+}
+
+gene_df <- gene_info()
+```
+
+
+
+```{r}
+save_logFC_by_gene_df <- function(logFC_by_gene_df){
+  
+  if (metadata_df[metadata_df$Id == experiment_id, ]$Genome=='mouse'){
+    # Read human/mouse gene conversion
+    mouse_to_human_gene_mapping_path <- paste0("../data/2021-06-15_mouse_to_human_gene_mapping_r25550x6.txt")
+    print(paste("Assert that", mouse_to_human_gene_mapping_path,  "exists:", assert_that(file.exists(mouse_to_human_gene_mapping_path))))
+    mouse_to_human_gene_mapping_df <- read.table(gzfile(mouse_to_human_gene_mapping_path), sep='\t', header=TRUE)
+
+    # Merge mouse genes to human genes
+    logFC_by_gene_df <- merge(x = logFC_by_gene_df, y = mouse_to_human_gene_mapping_df,
+                                      by.x ="ENSEMBL", by.y = "mouse_ens_id",  all.x= T)
+    colnames(logFC_by_gene_df)[which(names(logFC_by_gene_df) == "ENSEMBL")] <- "mouse_ENSEMBL"
+    colnames(logFC_by_gene_df)[which(names(logFC_by_gene_df) == "RNA_SYMBOL")] <- "mouse_RNA_SYMBOL"
+    colnames(logFC_by_gene_df)[which(names(logFC_by_gene_df) == "human_ens_id")] <- "ENSEMBL"
+    colnames(logFC_by_gene_df)[which(names(logFC_by_gene_df) == "human_gene_symbol")] <- "RNA_SYMBOL"
+
+    print(paste('nrow from logFC_by_gene_df with NAs:', nrow(logFC_by_gene_df[is.na(logFC_by_gene_df$RNA_SYMBOL),]))) 
+  }
+  
+    # Subset columns & remove duplicates
+  logFC_by_gene_df <- logFC_by_gene_df[,c("ENSEMBL", "RNA_SYMBOL", "RNA_logFC", "RNA_P_Value", "ATAC_SYMBOL", "Avg_ATAC_logFC", "nb_sig_peak", "GENENAME")]
+  logFC_by_gene_df <- unique(logFC_by_gene_df)
+
+  
+  if (metadata_df[metadata_df$Id == experiment_id, ]$Genome == 'human'){
+    
+    logFC_by_gene_df <- logFC_by_gene_df %>% 
+                                  mutate(RNA_SYMBOL = if_else(
+                                      condition = is.na(RNA_SYMBOL),
+                                      true      = ATAC_SYMBOL,
+                                      false     = RNA_SYMBOL))
+  #   # Add missing symbol from hgnc_ensembl_to_symbol.txt and ATAC_SYMBOL
+  #   hgnc_ensembl_to_symbol_path <- "../data/hgnc_ensembl_to_symbol.txt"
+  #   print(paste("Assert that", hgnc_ensembl_to_symbol_path,  "exists:", assert_that(file.exists(hgnc_ensembl_to_symbol_path))))
+  #   hgnc_ensembl_to_symbol <- read.table(hgnc_ensembl_to_symbol_path, header=TRUE, sep =',')
+  # 
+  #   print('Add missing symbol from hgnc_ensembl_to_symbol.txt and ATAC_SYMBOL')
+  #   logFC_by_gene_df_with_symbol <- merge(x = logFC_by_gene_df, y = hgnc_ensembl_to_symbol, by.x = "ENSEMBL", by.y="Approved", all.x= T)
+  #   logFC_by_gene_df <- logFC_by_gene_df_with_symbol %>% 
+  #                                 mutate( RNA_SYMBOL = if_else(
+  #                                     condition = is.na(RNA_SYMBOL), 
+  #                                     true      = ID, 
+  #                                     false     = RNA_SYMBOL)) %>% 
+  #                                 mutate(RNA_SYMBOL = if_else(
+  #                                     condition = is.na(RNA_SYMBOL),
+  #                                     true      = ATAC_SYMBOL,
+  #                                     false     = RNA_SYMBOL))
+  #   print( colSums(is.na(logFC_by_gene_df)) )
+
+  }
+  
+  print( colSums(is.na(logFC_by_gene_df)) )
+  
+  # Add some gene info
+  logFC_by_gene_df <- merge(logFC_by_gene_df, gene_df, by.x="ATAC_SYMBOL", by.y = 'BAF_gene', all.x=T)
+  logFC_by_gene_df <- logFC_by_gene_df %>% replace_na(list("BAF.gene" = 'NO', "TF.gene" = 'NO',"HGNC.gene" = 'NO'))
+    
+    
+  # Save logFC_by_gene_df
+  print(paste('Save logFC_by_gene_df, # genes:', dim(logFC_by_gene_df)[1]))
+  logFC_by_gene_df_name <- paste0('logFC_by_gene_', metadata_df[metadata_df$Id == experiment_id, ]$Contrast, ".csv")
+  logFC_by_gene_df_path <- paste0(glue("{logFC_by_gene_df_dir}/{logFC_by_gene_df_name}"))
+  print(paste('Save logFC_by_gene_df as:', logFC_by_gene_df_path))
+  write.csv(logFC_by_gene_df, logFC_by_gene_df_path, row.names = FALSE)
+  
+  ##### Save file name in metadata_df #####
+  metadata_df <- read.table(metadata_df_path, header=TRUE, sep =',')
+  metadata_df[metadata_df$Id == experiment_id,]$logFC_by_gene_df <- logFC_by_gene_df_name
+  write.csv(metadata_df, metadata_df_path, row.names = FALSE)
+}
+```
+
+
+#### Run all ####
+```{r}
+
+# gene_df <- gene_info()
+for (experiment_id in metadata_df$Id){ 
+  print(paste('experiment_id:', experiment_id))
+  
+  start_time <- Sys.time()
+  sig_peakAnno_df <- subset_sig_peakAnno_df(experiment_id)
+  ATAC_by_gene_df <- compute_ATAC_by_gene_df(sig_peakAnno_df)
+  RNAseq <- read_RNA_DGE_logFC(experiment_id)
+  logFC_by_gene_df <- merge_logFC_by_gene_df(ATAC_by_gene_df, RNAseq)
+  save_logFC_by_gene_df(logFC_by_gene_df)
+  end_time <- Sys.time()
+  print(end_time - start_time)
+}
+```
+
+
+
+
+

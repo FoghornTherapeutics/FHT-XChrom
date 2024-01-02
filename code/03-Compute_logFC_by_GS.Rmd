@@ -1,0 +1,304 @@
+---
+title: "03-Compute_logFC_by_GS"
+output: html_document
+---
+
+---
+title: "06-meanATAC_logFC_vs_GSEA"
+output: html_document
+---
+
+
+
+ PROBLEM2: GSEA done on repeated genes  SOLUTION: remove duplicates
+for every symbol + logFC paired that are uniqe
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message=FALSE)
+```
+
+
+```{r}
+library(assertthat)
+library(glue)
+library(dplyr)
+library(tidyverse)
+library(filesstrings)
+library(matsbyname)
+```
+
+
+#### Setup directories ####
+```{r}
+
+# Setup directory
+print(paste('getwd():', getwd()))
+getwd()
+
+# Read directory of RNAseq and ATACseq logFC datasets
+DGE_DPA_raw_data_dir <- "../data/DGE_DPA_raw_data"
+
+# Read directory of GSEA reports from RNAseq pipeline
+GSEA_reports_dir <- "../data/GSEA_reports/"
+# 
+# Read geneset collection metadata directory
+geneset_collection_metadata_dir <- "../data/geneset_collection_metadata/"
+
+# Datasets with logFC by gene (Table 1)
+logFC_by_gene_df_dir <- "../results/logFC_by_gene_df"
+
+# Datasets with Avg ATAC logFC, # sig peaks and genes by GS (plot)
+logFC_by_GS_df_dir <- "../results/logFC_by_GS_df"
+create_dir(logFC_by_GS_df_dir)
+
+
+# Experiment metadata
+metadata_df_path <-  '../data/experiment_metadata_df.csv'
+metadata_df <- read.table(metadata_df_path, header=TRUE, sep =',', check.names = F)
+metadata_df <-metadata_df[!is.na(metadata_df$Contrast),]
+```
+
+
+#### Read genesets_boolean_df: matrix of genes in rows and genesets in columns, 0/1 if gene belongs to GS ####
+```{r}
+read_genesets_boolean_matrix <- function(geneset_collection_metadata_dir){
+  memory.limit() 
+  memory.limit(size = 35000)
+  genesets_boolean_matrix_path <- paste0(geneset_collection_metadata_dir, "msigdb_fht_other_genesets_v1_boolean_matrix_r42673x38109.rds")
+  print(paste('Assert that',  genesets_boolean_matrix_path, 'exists:', assert_that(file.exists(genesets_boolean_matrix_path))))
+  genesets_boolean_matrix <- readRDS(genesets_boolean_matrix_path)
+  return(genesets_boolean_matrix)
+}
+
+all_genesets_boolean_matrix <- read_genesets_boolean_matrix(geneset_collection_metadata_dir)
+all_genesets_boolean_matrix[1:10,1:10]
+```
+
+
+
+#### Read GSEA_collection_mapping: metadata of geneset collection ####
+```{r}
+read_GSEA_collection_mapping <- function(geneset_collection_metadata_dir){  # Read GSEA on RNA DGE logFC
+  # Add family pathway to GSEA report 
+  GSEA_collection_mapping_path <- paste0(geneset_collection_metadata_dir, "msigdb_fht_other_genesets_v1_metadata_r38109x8.txt.gz")
+  print(paste('Assert that',  GSEA_collection_mapping_path, 'exists:', assert_that(file.exists(GSEA_collection_mapping_path))))
+  GSEA_collection_mapping <- read_delim(GSEA_collection_mapping_path, delim ='\t')
+  GSEA_collection_mapping <- GSEA_collection_mapping[, -which(names(GSEA_collection_mapping) %in% c("genes", "geneset_size"))]
+  return(GSEA_collection_mapping)
+}
+
+GSEA_collection_mapping <- read_GSEA_collection_mapping(geneset_collection_metadata_dir)
+```
+
+
+#### Merge ATAC-seq avgerage logFC on genes on RNA-seq data on Nearest TSS (right merged) ####
+```{r}
+read_logFC_by_gene_df <-function(experiment_id){
+  
+  # Read logFC_by_gene_df ATAC logFC assigned to genes 
+  logFC_by_gene_df_name <- paste0('logFC_by_gene_', metadata_df[metadata_df$Id == experiment_id,]$Contrast, ".csv")
+  logFC_by_gene_df_path <- paste0(glue("{logFC_by_gene_df_dir}/{logFC_by_gene_df_name}"))
+  print(paste("Assert that", logFC_by_gene_df_path,  "exists:", assert_that(file.exists(logFC_by_gene_df_path))))
+  logFC_by_gene_df <- read_csv(logFC_by_gene_df_path)
+  
+  
+  # Subset columns, removes duplicates and rows with NAs
+  ATAC_logFC_by_gene_df <- logFC_by_gene_df[c('RNA_SYMBOL', 'Avg_ATAC_logFC', 'nb_sig_peak')]
+  ATAC_logFC_by_gene_df <- distinct(ATAC_logFC_by_gene_df)    # Only get unique values
+  ATAC_logFC_by_gene_df <- ATAC_logFC_by_gene_df[complete.cases(ATAC_logFC_by_gene_df), ]
+  
+return(ATAC_logFC_by_gene_df)
+}
+```
+
+
+
+#### Compute Avg_ATAC_log_by_GS on significant changes in ATAC peaks: dataframe with Avg ATAC logFC, number of significant peaks and sig genes for each GS ####
+```{r}
+make_matrix <- function(df,rownames = NULL){
+    my_matrix <-  as.matrix(df)
+    if(!is.null(rownames))
+      rownames(my_matrix) = rownames
+    return(my_matrix)
+  }
+```
+
+
+
+```{r}
+genesets_boolean_matrix <- all_genesets_boolean_matrix
+compute_Avg_ATAC_logFC_by_GS <- function(genesets_boolean_matrix, ATAC_logFC_by_gene_df){
+
+  print(paste('Read Avg ATAC logFC, nb sig peaks from ATAC_by_gene_df per genes, # unique genes:', dim(ATAC_logFC_by_gene_df)[1]))
+  
+  # Get genes in common between genesets_boolean_df and ATAC_logFC_by_gene_df
+  common_gene <- str_sort(Reduce(intersect,list(rownames(genesets_boolean_matrix),ATAC_logFC_by_gene_df$RNA_SYMBOL)))
+  print(paste('Subset genes in common between genesets_boolean_df and ATAC_logFC_by_gene_df, length(common_gene):', length(common_gene)))
+
+  
+  # Filter common genes and Sort rows by the same order
+  genesets_boolean_matrix <- all_genesets_boolean_matrix[rownames(all_genesets_boolean_matrix) %in% common_gene, ]
+  genesets_boolean_matrix <- sort_rows_cols(genesets_boolean_matrix, margin=1)
+  ATAC_logFC_by_gene_on_common_gene_df <- ATAC_logFC_by_gene_df[match(common_gene, ATAC_logFC_by_gene_df$RNA_SYMBOL ),]
+  print(paste("Assert that sorted genes are identical in both matrices", assert_that(are_equal(rownames(genesets_boolean_matrix), ATAC_logFC_by_gene_on_common_gene_df$RNA_SYMBOL))))
+
+  # print('Convert tibbles as matrices')
+  ATAC_logFC_by_gene_matrix <- make_matrix(select(ATAC_logFC_by_gene_on_common_gene_df,-RNA_SYMBOL),
+                         pull(ATAC_logFC_by_gene_on_common_gene_df,RNA_SYMBOL))
+
+  print(paste0('Mulitply logFc by geneset for each genes: matrix of dim (2,', ncol(genesets_boolean_matrix) ,')'))
+  sum_logFC_by_GS_matrix <- t(ATAC_logFC_by_gene_matrix) %*% genesets_boolean_matrix
+  print(paste0('Check that sum_logFC_by_GS_matrix has dimension (2,', ncol(genesets_boolean_matrix) ,'): ', assert_that(are_equal(dim(sum_logFC_by_GS_matrix), c(2, ncol(genesets_boolean_matrix))) )))
+  print(sum_logFC_by_GS_matrix[, 1:10])
+  
+  print(paste0('Compute number of expressed genes by GS: vector of length: ', ncol(genesets_boolean_matrix) ))
+  nb_sig_gene <- colSums(genesets_boolean_matrix)
+  print(paste0('Check that nb_sig_gene has length of ', ncol(genesets_boolean_matrix) ,': ', assert_that(are_equal(length(nb_sig_gene), ncol(genesets_boolean_matrix)) )))
+  print(nb_sig_gene[1:10])
+  
+  print(paste0('Divide sum of logFC by GS by number of expressed genes: vector of length (2,', ncol(genesets_boolean_matrix) ,')'))
+  Avg_ATAC_logFC <- sum_logFC_by_GS_matrix[1:1, ] / nb_sig_gene
+  print(paste0('Check that Avg_ATAC_logFC has length of ', ncol(genesets_boolean_matrix) ,': ', assert_that(are_equal(length(Avg_ATAC_logFC), ncol(genesets_boolean_matrix)) )))
+  print(Avg_ATAC_logFC[1:10])
+
+  
+  nb_sig_peak <- sum_logFC_by_GS_matrix[2:2, ]
+
+  print(paste0('Build ATAC_by_GS_matrix with avglogFC, nb_sig_peak, nb_sig_gene by GS: matrix of dim (', ncol(genesets_boolean_matrix) ,', 3)'))
+  ATAC_by_GS_matrix <- cbind(Avg_ATAC_logFC, nb_sig_peak, nb_sig_gene) 
+  print(paste0('Check that ATAC_by_GS_matrix has dimension of: (', ncol(genesets_boolean_matrix),', 3): ', assert_that(are_equal(dim(ATAC_by_GS_matrix), c(ncol(genesets_boolean_matrix), 3)) )))
+  print(ATAC_by_GS_matrix[1:5,])
+
+  ATAC_by_GS_df <- as.tibble(ATAC_by_GS_matrix, rownames = "geneset")
+  print(colSums(is.na(ATAC_by_GS_df)))
+  
+  return(ATAC_by_GS_df)
+}
+```
+
+
+
+
+
+
+#### Read GSEA report ####
+```{r}
+# # ### BEFORE ###
+# # experiment_id<- 39
+# read_GSEA_report <- function(experiment_id, GSEA_collection_mapping){
+# 
+#   # Read GSEA on RNA DGE logFC
+#   GSEA_report_path <- paste0(GSEA_reports_dir, metadata_df[metadata_df$Id == experiment_id,]$GSEA_file)
+#   print(paste('Assert that',  GSEA_report_path, 'exists:', assert_that(file.exists(GSEA_report_path))))
+# 
+#   GSEA_report <- read.table(gzfile(GSEA_report_path), sep=',', header=TRUE)
+# 
+# 
+#   # Merge genset collection names on geneset list
+#   GSEA_df <- merge(x = GSEA_collection_mapping, y = GSEA_report,
+#                                     by.x ="original_name", by.y = "Term",  all.y= T)
+#   # Add NES score
+#   GSEA_df$NES_RNA_score <- (-1) * log10(GSEA_df$pval + 1e-4) * GSEA_df$nes
+# 
+#   return(GSEA_df)
+# }
+# # 
+# # ### BEFORE ###
+# # 
+# # 
+# # # GSEA_df <- read_GSEA_report(experiment_id, GSEA_collection_mapping)
+# # # GSEA_df
+```
+
+
+
+
+
+#### Read GSEA report ####
+```{r}
+read_GSEA_report <- function(experiment_id, GSEA_collection_mapping){
+  
+  # Read GSEA on RNA DGE logFC
+  GSEA_report_path <- paste0(GSEA_reports_dir, metadata_df[metadata_df$Id == experiment_id,]$GSEA_file)
+  print(paste('Assert that',  GSEA_report_path, 'exists:', assert_that(file.exists(GSEA_report_path))))
+  GSEA_report <- read.table(gzfile(GSEA_report_path), sep='\t', header=TRUE)
+
+  # Merge genset collection names on geneset list
+  GSEA_df <- merge(x = GSEA_collection_mapping, y = GSEA_report, 
+                                    by.x ="original_name", by.y = "ID",  all.y= T)
+  # colnames(GSEA_df)[colnames(GSEA_df) == "ID"] = "original_name"
+  colnames(GSEA_df)[colnames(GSEA_df) == "NES"] = "nes"
+  colnames(GSEA_df)[colnames(GSEA_df) == "pvalue"] = "pval"
+  colnames(GSEA_df)[colnames(GSEA_df) == "setSize"] = "geneset_size"
+  colnames(GSEA_df)[colnames(GSEA_df) == "core_enrichment"] = "genes"
+  GSEA_df$genes <- gsub(pattern = "/", replacement = ";", GSEA_df$genes)
+
+  GSEA_df$NES_RNA_score <- (-1) * log10(GSEA_df$pval + 1e-4) * GSEA_df$nes
+
+  return(GSEA_df)
+}
+```
+
+
+
+
+
+#### Merge GSEA_df and ATAC_by_GS_df on GS ####
+```{r}
+logFC_by_GS_df <- function(experiment_id, ATAC_by_GS_df, GSEA_df){
+  
+  logFC_by_GS_df <- merge(x = ATAC_by_GS_df, y = GSEA_df, 
+                                    by.x ='geneset', by.y = "cleaned_name")
+  print(colSums(is.na(logFC_by_GS_df)))
+  
+  ##### Save GSEA_df as csv #####
+  logFC_by_GS_df_name <- paste0('logFC_by_GS_', metadata_df[metadata_df$Id == experiment_id,]$Contrast, '.csv')
+  logFC_by_GS_df_path <- glue("{logFC_by_GS_df_dir}/{logFC_by_GS_df_name}")
+  print(paste('Save logFC_by_GS_df_path as:', logFC_by_GS_df_path))
+  write.csv(logFC_by_GS_df, logFC_by_GS_df_path, row.names = TRUE)
+
+
+  ##### Save file name in metadata_df #####
+  metadata_df <- read.table(metadata_df_path, header=TRUE, sep =',')
+  metadata_df[metadata_df$Id == experiment_id,]$logFC_by_GS_df <- logFC_by_GS_df_name
+  write.csv(metadata_df, metadata_df_path, row.names = FALSE)
+}
+```
+
+
+
+
+#### Run all ####
+```{r}
+
+# all_genesets_boolean_matrix <- read_genesets_boolean_matrix(geneset_collection_metadata_dir)
+# GSEA_collection_mapping <- read_GSEA_collection_mapping(geneset_collection_metadata_dir)
+
+for (experiment_id in metadata_df$Id){
+  print(paste('experiment_id:', experiment_id))
+  
+  start_time <- Sys.time()
+  ATAC_logFC_by_gene_df <- read_logFC_by_gene_df(experiment_id)
+  ATAC_by_GS_df <- compute_Avg_ATAC_logFC_by_GS(all_genesets_boolean_matrix, ATAC_logFC_by_gene_df)
+  GSEA_df <- read_GSEA_report(experiment_id, GSEA_collection_mapping)
+  logFC_by_GS_df(experiment_id, ATAC_by_GS_df, GSEA_df)
+  end_time <- Sys.time()
+  print(end_time - start_time)
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
