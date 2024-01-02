@@ -26,11 +26,15 @@ Peak-gene assignments enable insights beyond RNA-seq or ATAC-seq alone:
 
 # Data
 
+
+# Data Flow
+
+
+The pipeline is split into three parts. The first one (01-Assign_peak2gene.Rmd) is assignining peaks to genes that are also expressed in the RNA experiment and peaks within 1 million base pair of the Nearest TSS . The second part (02-Compute_logFC_by_gene.Rmd) computes the average logFC from the ATACseq experiment. It filters for peaks that are significant and then take the average of the peaks that are asscoiated to the same gene. It corresponds to the first tab of the app: the gene level. The last part (03-Compute_logFC_by_GS.Rmd) computes the weighted average logFC by geneset and compute the RNA NES score. It corresponds to the second tab: the pathway level.
+
+<img src="/diagrams/XChrom_diagram.jpg" alt="image" style="width:760px;height:auto;">
+
 # XChrom app snapshot
-
-XChrom is a highly interactive tool that enables characterization of gene/pathway expression and associated chromatin changes.
-
-
 
 
 The app is organized with a let panel that dislays several dropdown menus. It is possible to select the experiment on the first one, which will be descripted right below it. The next two dropdown menus are for the the gene set collection. <br/>
