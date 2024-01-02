@@ -1,5 +1,8 @@
 # Why compare RNAseq and ATACseq?
-RNAseq profiles genomic mRNA expression, while ATACseq profiles sites of open chromatin where gene regulatory proteins bind. Combining gene expression and open chromatin allows correlation of gene expression changes with local chromatin changes, highlighting the specific promoters and enhancers that potentially drive observed changes in gene expression.
+
+<img src="/readme_figures/motivations.JPG" alt="image" style="width:550px;height:auto;">
+
+ATACseq identifies peaks of open chromatin throughout the genome, which can be compared across conditions to yield sites of chromatin accessibility loss (Figure A). Separately, RNAseq identifies differentially expressed genes (Figure B). Comparing ATAC and RNA data manually is laborious and error prone (Figure C). We propose to automate this process to systematically search for these relationships, thus maximizing insights from combined transcriptome and open chromatin information. Combining gene expression and open chromatin allows correlation of gene expression changes with local chromatin changes, highlighting the specific promoters and enhancers that potentially drive observed changes in gene expression.
 
 By combining RNAseq and ATACseq, we can ask:
 * Which gene expression changes correspond to local chromatin changes?
@@ -65,6 +68,7 @@ On this screenshot, the page is selected to be for the gene level tab showing th
 
 <img src="/readme_figures/overall_view.JPG" alt="image" style="width:760px;height:auto;">
 
+### Tab 1: Gene level
 Once you click on the name of a gene, for example HS3ST1, it is linked to the scatter plot below and highlight the selected gene in orange. 
 
 <img src="/readme_figures/First_tab1.JPG" alt="image" style="width:760px;height:auto;">
@@ -81,6 +85,9 @@ Selecting a gene in the first interactive table or in the scatter plot also popu
 
 It also populated a third table with the list of all the geneset that include that selected genes. This table could be used for the the second tab, the pathway level. 
 
+### Tab 2: Gene Set/Pathway level
+
+In this analysis, we introduce the [Gene Set Enrichment Analysis (GSEA)](https://www.gsea-msigdb.org/gsea/index.jsp). It identifies sets of genes that are collectively up- or downregulated in RNAseq data. The Normalized Enrichment Score (NES) indicates how positively or negatively shifted a pathway is relative to randomly selected genes in a ranked list of all genes.
 
 From the left panel, you can select a gene set collection for the second tab. It populates the dropdown menu below with the list of pathways in that collection. This selected pathway is repesented in the scatter plot in the main panel in orange. Each point represents a geneset/pathway. Again the y-axis corresponds to the change in gene expression. It is the weighted p-value NES, i.e. -log10(pval) * NES. The x-axis represents the change in open chromatin. It is the average logFC from any significant ATAC peaks proximal to pathway genes weighted by the number of significant genes, i.e., avg(ATAC logFC) * log10(nb of sig genes). 
 
