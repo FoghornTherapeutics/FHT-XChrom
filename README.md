@@ -10,12 +10,14 @@ By combining RNAseq and ATACseq, we can ask:
 # Associating Enhancers with Genes: The Nearest Neighbor
 
 The goal is to systematically correlate treatment-induced chromatin changes (measured by ATAC-seq) with gene expression changes (measured by RNA-seq). The challenge is to determine the precise relationships between distal enhancers and their target genes which is unknown without additional data collection (e.g. Hi-C, 3C). 
-<img src="/readme_figures/NNA_1.JPG" alt="image" style="width:760px;height:auto;">
+
+<img src="/readme_figures/NNA_1.JPG" alt="image" style="width:550px;height:auto;">
 
 
 As a solution, we assign each ATAC-seq peak to nearest gene transcription start site wihtin 1 million base pair, excluding genes not expressed by RNA-seq.
 
-<img src="/readme_figures/NNA_2.JPG" alt="image" style="width:760px;height:auto;">
+<img src="/readme_figures/NNA_2.JPG" alt="image" style="width:550px;height:auto;">
+
 
 Peak-gene assignments enable insights beyond RNA-seq or ATAC-seq alone: 
 * Identify genes with high numbers of associated ATAC-seq peaks that change on treatment.
@@ -31,8 +33,9 @@ XChrom is a highly interactive tool that enables characterization of gene/pathwa
 
 
 
-The left panel dislays several dropdown menus. It is possible to select the experiment on the first one, which will be descripted right below it. The next two ones are for the the gene set collection. <br/>
+The app is organized with a let panel that dislays several dropdown menus. It is possible to select the experiment on the first one, which will be descripted right below it. The next two dropdown menus are for the the gene set collection. <br/>
 The main panels is divided into two tabs: one for the gene level and one for the pathway level. They will be both described in the example below. <br/>
+
 On this screenshot, the page is selected to be for the gene level tab showing the list of all the genes in this experiment. The interactive table is ordered by the number of significant ATAC peaks. MYC has the highest number with 44 peaks.
 
 <img src="/readme_figures/overall_view.JPG" alt="image" style="width:760px;height:auto;">
@@ -42,11 +45,11 @@ Once you click on the name of a gene, for example HS3ST1, it is linked to the sc
 <img src="/readme_figures/First_tab1.JPG" alt="image" style="width:760px;height:auto;">
 
 This plot is a visual repesentation of the table right above where each point is a gene.
-The y-axis corresponds to the change in gene expression with a unique logFC from the RNA experiment results. The x-axis represents the change in chromatin. Since several peaks can be associated to the same gene, we compute the average logFC of the peaks that are significant (p-value < 0.05) for each gene. The color is the logFC of the total number of siginificant peaks that are associated to that gene. In consequence, we can establish a relationship between the change in chromatin and the quantify the activity around it.
+The y-axis corresponds to the change in gene expression with a unique logFC from the RNA experiment results. The x-axis represents the change in chromatin. Since several peaks can be associated to the same gene, we compute the average logFC of the peaks that are significant (p-value < 0.05) for each gene. The color is the log10 of the total number of siginificant peaks that are associated to that gene. In consequence, we can establish a relationship between the change in chromatin and quantify the activity around it.
 
 <img src="/readme_figures/chromatin_vs_expression_relationship.JPG" alt="image" style="width:760px;height:auto;">
 
-Selecting a gene in the first interactive table or in the scatter plot also populates another summary of all the peaks that are associated with that gene. It is pre-selected to display only siginificant peaks but it is possible to add any other other pekas with the radio button. It gives crucial information about every peak logFC. Once you click on the peak id, it generates a link to the UCSC Genome Browser in that exact genomic location showed below.
+Selecting a gene in the first interactive table or in the scatter plot also populates another summary of all the peaks that are associated with that gene. It is pre-selected to display only siginificant peaks but it is possible to add any other other peaks with the radio button. It gives crucial information about every peak logFC. Once you click on the peak id, it generates a link to the UCSC Genome Browser in that exact genomic location showed below.
 
 <img src="/readme_figures/First_tab2.JPG" alt="image" style="width:760px;height:auto;">
 
