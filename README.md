@@ -76,17 +76,18 @@ The y-axis corresponds to the change in gene expression with a unique logFC from
 
 Selecting a gene in the first interactive table or in the scatter plot also populates another summary of all the peaks that are associated with that gene. It is pre-selected to display only siginificant peaks but it is possible to add any other other peaks with the radio button. It gives crucial information about every peak logFC like the significance, the distance to TSS and some annotations. Once you click on the peak id, it generates a link to the UCSC Genome Browser in that exact genomic location showed below.
 
-<img src="/readme_figures/First_tab2.JPG" alt="image" style="width:760px;height:auto;"> <img src="/readme_figures/IGV.JPG" alt="image" style="width:760px;height:auto;">
+<img src="/readme_figures/First_tab2.JPG" alt="image" style="width:760px;height:auto;"> 
+<img src="/readme_figures/IGV.JPG" alt="image" style="width:760px;height:auto;">
 
 It also populated a third table with the list of all the geneset that include that selected genes. This table could be used for the the second tab, the pathway level. 
 
 
-From the left panel, you can select a gene set collection, that populates the dropdown menu below with the list of pathways in that collection. This selected pathway is repesented in the scatter plot in the main panel in orange. Each point represents a geneset/pathway. Again the y-axis corresponds to the change in gene expression. It is the weighted p-value NES, i.e. -log10(pval) * NES. The x axis represents the change in open chromatin. It is the average logFC from any significant ATAC peaks proximal to pathway genes weighted by the number of significant genes, i.e., avg(ATAC logFC) * log10(nb of sig genes). 
+From the left panel, you can select a gene set collection for the second tab. It populates the dropdown menu below with the list of pathways in that collection. This selected pathway is repesented in the scatter plot in the main panel in orange. Each point represents a geneset/pathway. Again the y-axis corresponds to the change in gene expression. It is the weighted p-value NES, i.e. -log10(pval) * NES. The x-axis represents the change in open chromatin. It is the average logFC from any significant ATAC peaks proximal to pathway genes weighted by the number of significant genes, i.e., avg(ATAC logFC) * log10(nb of sig genes). 
 
 <img src="/readme_figures/Second_tab1.JPG" alt="image" style="width:760px;height:auto;">
 
 
-Once a pathway is selected from the dropdown menu or by clicking on a point in the scatter plot, it populates an interactive table with the list of genes in that gene set. Then, just like in the first tab, it populates another table with the list of peaks once you click on a gene name.
+Once a pathway is selected from the dropdown menu or by clicking on a point in the scatter plot, it populates an interactive table with the list of genes in that gene set. Then, just like in the first tab, it populates another table with the list of peaks once you click on a gene name and a link to the IGV Portal once you select a peak id.
 
 
 <img src="/readme_figures/Second_tab2.JPG" alt="image" style="width:760px;height:auto;">
