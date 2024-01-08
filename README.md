@@ -54,7 +54,7 @@ Replicates:  N=2
 # Data Flow
 
 
-The pipeline is split into three parts. The first one (01-Assign_peak2gene.Rmd) is assignining peaks to genes that are also expressed in the RNA experiment and peaks within 1 million base pair of the Nearest TSS . The second part (02-Compute_logFC_by_gene.Rmd) computes the average logFC from the ATACseq experiment. It filters for peaks that are significant and then takes the average of the peaks that are asscoiated to the same gene. It corresponds to the first tab of the app: the gene level. The last part (03-Compute_logFC_by_GS.Rmd) computes the weighted average ATAC logFC and compute the RNA NES score by geneset. It corresponds to the second tab: the pathway level.
+The XChrom pipeline is split into three parts. The first one (01-Assign_peak2gene.Rmd) assigns ATAC-seq peaks to a gene that (1) is expressed in the RNA experiment (2) has the nearest TSS (transcriptional start site) and (3) is within 1 million base pairs of that nearest TSS. The second part (02-Compute_logFC_by_gene.Rmd) computes the average logFC from the ATACseq peaks that are associated with each gene.  It first filters down to peaks that have a statistically significant change and then takes the average of the peaks that are asscoiated to the same gene. It corresponds to the first tab of the app: the gene level. The last part (03-Compute_logFC_by_GS.Rmd) computes the weighted average ATAC logFC and compute the RNA NES score by geneset. It corresponds to the second tab: the pathway level.
 
 <img src="/diagrams/XChrom_diagram.jpg" alt="image" style="width:600px;height:auto;">
 
