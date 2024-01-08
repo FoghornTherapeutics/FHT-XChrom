@@ -1,4 +1,4 @@
-# Why compare RNAseq and ATACseq?
+# Comparing RNAseq and ATACseq
 
 <img src="/readme_figures/motivations.JPG" alt="image" style="width:550px;height:auto;">
 
@@ -29,7 +29,7 @@ Peak-gene assignments enable insights beyond RNA-seq or ATAC-seq alone:
 
 # Data
 
-The standard pipeline is ran on publicly available data from paper "[Chromatin accessibility underlies synthetic lethality of SWI/SNF subunits in ARID1A-mutant cancers](https://elifesciences.org/articles/30506#content)" looking for potential PD markers as well as what an ATAC-seq profile looks like. This paper has ATACseq results of ARID1A-/- cancers with ARID1B KD. 
+Our standard pipeline was run on publicly available data from paper "[Chromatin accessibility underlies synthetic lethality of SWI/SNF subunits in ARID1A-mutant cancers](https://elifesciences.org/articles/30506#content)" looking for potential PD markers as well as what an ATAC-seq profile looks like. This paper has ATACseq results of ARID1A-/- cancers with ARID1B KD. 
 
 **Data from GEO series**:  [link](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE101975) <br/>
 Biological context (N=2):  TOV21G, HCT116 <br/>
