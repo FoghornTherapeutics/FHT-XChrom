@@ -60,7 +60,7 @@ $$weighted \space ATAC \space logFC = average(ATAC \space log_2FC) * log_{10}(nu
 
 $$pathway \space RNAseq \space score = -log_{10}(pValue \space) * NES$$
 
-Where adjusted pValue and NES (normalized enrichment score) are the results from gene set enrichment analysis (GSEA) for a given pathway/geneset.
+Where pValue and NES (normalized enrichment score) are the results from gene set enrichment analysis (GSEA) for a given pathway/geneset.
 
 <img src="/diagrams/XChrom_diagram.jpg" alt="image" style="width:600px;height:auto;">
 
