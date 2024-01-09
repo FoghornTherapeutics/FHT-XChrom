@@ -55,12 +55,12 @@ Replicates:  N=2
 
 
 The XChrom pipeline is split into three parts. The first one (01-Assign_peak2gene.Rmd) assigns ATAC-seq peaks to a gene that (1) is expressed in the RNA experiment (2) has the nearest TSS (transcriptional start site) and (3) is within 1 million base pairs of that nearest TSS. The second part (02-Compute_logFC_by_gene.Rmd) computes the average logFC from the ATACseq peaks that are associated with each gene.  It first filters down to peaks that have a statistically significant change and then takes the average of the peaks that are asscoiated to the same gene. It corresponds to the first tab of the app: the gene level. The last part (03-Compute_logFC_by_GS.Rmd) is for the second tab: the pathway level.  For each pathway it computes a weighted average of the ATAC peak logFC values for the pathway, and pathway RNA-seq score.  The definitions of these are:
-$$weighted \space ATAC \space logFC = average(ATAC \space logFC) * log_{10}(number \space of \space statistically \space significant \space genes)$$
 
-$$pathway \space RNAseq \space score = -log_{10}(adjusted \space pValue \space NES) * NES$$
+$$weighted \space ATAC \space logFC = average(ATAC \space log_2FC) * log_{10}(number \space of \space expressed \space \space genes \space in \space geneset)$$
 
-Where NES is the normalized enrichment score from GSEA (gene set enrichment analysis).
+$$pathway \space RNAseq \space score = -log_{10}(pValue \space) * NES$$
 
+Where adjusted pValue and NES (normalized enrichment score) are the results from gene set enrichment analysis (GSEA) for a given pathway/geneset.
 
 <img src="/diagrams/XChrom_diagram.jpg" alt="image" style="width:600px;height:auto;">
 
