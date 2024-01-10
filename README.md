@@ -1,3 +1,6 @@
+[Link to the app](https://www.shinyapps.io/admin/#/application/10900533)
+
+
 # Comparing RNAseq and ATACseq
 
 <img src="/readme_figures/motivations.JPG" alt="image" style="width:550px;height:auto;">
