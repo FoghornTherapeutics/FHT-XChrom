@@ -1,14 +1,10 @@
 [Link to the app](https://floreuzan.shinyapps.io/fht-xchrom/)
 
-
-
-
-
 # Comparing RNAseq and ATACseq
 
 <img src="/readme_figures/motivations.JPG" alt="image" style="width:550px;height:auto;">
 
-ATACseq identifies peaks of open chromatin throughout the genome, which can be compared across conditions to yield sites of chromatin accessibility loss (Figure A). Separately, RNAseq identifies differentially expressed genes (Figure B). Comparing ATAC and RNA data manually is laborious and error prone (Figure C). We propose to automate this process to systematically search for these relationships, thus maximizing insights from combined transcriptome and open chromatin information. Combining gene expression and open chromatin allows correlation of gene expression changes with local chromatin changes, highlighting the specific promoters and enhancers that potentially drive observed changes in gene expression.
+ATACseq identifies peaks of open chromatin throughout the genome, which can be compared across conditions to yield sites of chromatin accessibility loss (Figure A). Separately, RNAseq identifies differentially expressed genes (Figure B). Comparing ATAC and RNA data manually is laborious and error prone (Figure C). We propose to automate this process to systematically search for these relationships, thus maximizing insights from combined transcriptome and open chromatin information. Combining gene expression and open chromatin allows correlation of gene expression changes with local chromatin changes, highlighting the specific promoters and enhancers that potentially drive observed changes in gene expression.  Quick side note:  we have not yet added details of installation/setup - we will if there is interest - but we provide the code as more detailed description of the details of the calculations.
 
 By combining RNAseq and ATACseq, we can ask:
 * Which gene expression changes correspond to local chromatin changes?
