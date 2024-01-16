@@ -1,4 +1,7 @@
-[Link to the app](https://www.shinyapps.io/admin/#/application/10900533)
+[Link to the app](https://floreuzan.shinyapps.io/fht-xchrom/)
+
+
+
 
 
 # Comparing RNAseq and ATACseq
